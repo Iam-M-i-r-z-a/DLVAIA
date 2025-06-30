@@ -119,6 +119,6 @@ Contributions, bug reports, and feature requests are welcome! If you find a new 
 ## ✉️ Connect with Me
 
 * **GitHub:** [Iam-M-i-r-z-a](https://github.com/Iam-M-i-r-z-a)
-* **Linkedin:** [abdelrahman-hesham-b208b427b]([https://github.com/Iam-M-i-r-z-a](https://www.linkedin.com/in/abdelrahman-hesham-b208b427b/))
+* **Linkedin:** [abdelrahman-hesham-b208b427b](https://www.linkedin.com/in/abdelrahman-hesham-b208b427b/)
 
 ---
