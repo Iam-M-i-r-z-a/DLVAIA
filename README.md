@@ -62,7 +62,7 @@ With Ollama ready, you can now deploy DLVAIA:
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/Iam-M-i-r-z-a/DLVAIA.git](https://github.com/Iam-M-i-r-z-a/DLVAIA.git)
+    git clone https://github.com/Iam-M-i-r-z-a/DLVAIA.git
     ```
 
 2.  **Navigate to the Project Directory:**
@@ -115,15 +115,10 @@ Contributions, bug reports, and feature requests are welcome! If you find a new 
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## ✉️ Connect with Me
 
 * **GitHub:** [Iam-M-i-r-z-a](https://github.com/Iam-M-i-r-z-a)
-* *(Add your LinkedIn or other relevant links here if you want HR to easily find you!)*
+* **Linkedin:** [abdelrahman-hesham-b208b427b]([https://github.com/Iam-M-i-r-z-a](https://www.linkedin.com/in/abdelrahman-hesham-b208b427b/))
 
 ---
