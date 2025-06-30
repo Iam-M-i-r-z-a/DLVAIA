@@ -5,6 +5,18 @@
 [![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black?style=for-the-badge&logo=ollama)](https://ollama.com/)
 
 ---
+## ⚠️ Caution
+
+> **This project is deliberately insecure.**
+>
+> - ❌ **Do NOT deploy this application in production.**
+> - ❌ **NEVER enter real personal, sensitive, or confidential data.**
+>
+> DLVAIA is intended for **educational and research purposes only** to explore and demonstrate AI/LLM security vulnerabilities. Misusing it may cause harm or violate privacy policies.
+
+
+
+---
 
 ## 🌟 About This Project
 
@@ -12,9 +24,16 @@ Welcome to **DLVAIA (Deliberately Left Vulnerable AI Application)**!
 
 This project is a hands-on learning environment designed to help you understand and identify critical security vulnerabilities in Large Language Models (LLMs). Inspired by the **OWASP Top 10 for LLMs**, DLVAIA provides a practical sandbox to explore common attack vectors and defense mechanisms.
 
-Whether you're a security researcher, a developer building with LLMs, or an enthusiast curious about AI security, DLVAIA offers a unique opportunity to test your understanding in a controlled, educational setting.
+**A key advantage of DLVAIA is its 100% local deployability.** Due to Ollama, you can run the entire application, including the LLM inference, completely on your own machine. This means:
+* **No API Keys Required:** You won't need to connect to remote services like Claude, ChatGPT, or Gemini, eliminating dependency on third-party APIs.
+* **Enhanced Privacy:** Your data stays on your machine, ensuring maximum privacy and control over your interactions.
+* **Cost-Free Inference:** There are no recurring costs associated with LLM usage, making it ideal for continuous learning and experimentation.
+
+Whether you're a security researcher, a developer building with LLMs, or an enthusiast curious about AI security, DLVAIA offers a unique opportunity to test your understanding in a controlled, private, and educational setting.
 
 ---
+
+
 
 ## 🎯 Challenges You'll Explore
 
@@ -95,7 +114,6 @@ With Ollama ready, you can now deploy DLVAIA:
     ```bash
     pip install -r requirements.txt
     ```
-    *(**Note:** It was `requirments.txt` in your original, ensure it's correctly spelled `requirements.txt` in your actual repo!)*
 
 6.  **Run the Application:**
     Start the Flask application.
@@ -114,7 +132,6 @@ With Ollama ready, you can now deploy DLVAIA:
 Contributions, bug reports, and feature requests are welcome! If you find a new vulnerability pattern or have ideas for improving DLVAIA, please open an issue or submit a pull request.
 
 ---
-
 
 ## ✉️ Connect with Me
 
