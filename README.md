@@ -71,7 +71,12 @@ DLVAIA leverages [Ollama](https://ollama.com/) for running local LLMs, ensuring 
     Visit the official Ollama website and download the installer for your operating system:
     ➡️ [**ollama.com/download**](https://ollama.com/download)
 
-2.  **Install an LLM Model:**
+2.  **Navigate the Models you wanna:**
+    Visit the official Ollama models website:
+    ➡️ [**ollama.com/models**](https://ollama.com/models)
+
+    
+4.  **Install an LLM Model:**
     After installing Ollama, open your terminal or command prompt and pull the whatever model you want, but instruct models preferred
     ```bash
     ollama pull <model_name>
