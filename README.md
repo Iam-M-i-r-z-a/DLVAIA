@@ -42,7 +42,7 @@ Whether you're a security researcher, a developer building with LLMs, or an enth
 
 ## 🎯 Challenges You'll Explore
 
-DLVAIA specifically features and allows you to experiment with the following OWASP Top 10 LLM vulnerabilities:
+DLVAIA specifically features and allows you to experiment some of OWASP Top 10 LLM vulnerabilities:
 
 * **Prompt Injection:** Manipulating the model's output through crafted inputs.
 * **Insecure Output Handling:** Exploiting how the application processes and displays LLM responses.
@@ -53,7 +53,6 @@ DLVAIA specifically features and allows you to experiment with the following OWA
 * **Model Theft:** Exploring methods to extract or misuse proprietary models.
 * **Overreliance:** Recognizing the dangers of excessive trust in LLM outputs.
 * **Excessive Agency:** Examining risks when LLMs are granted too much autonomy.
-* **Insecure Plugins:** Understanding vulnerabilities introduced by external tools or plugins.
 
 ---
 
