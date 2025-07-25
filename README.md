@@ -72,9 +72,9 @@ DLVAIA leverages [Ollama](https://ollama.com/) for running local LLMs, ensuring 
     ➡️ [**ollama.com/download**](https://ollama.com/download)
 
 2.  **Install an LLM Model:**
-    After installing Ollama, open your terminal or command prompt and pull the `qwen3:8b` model. This is the default model used by DLVAIA.
+    After installing Ollama, open your terminal or command prompt and pull the whatever model you want, but instruct models preferred
     ```bash
-    ollama pull qwen3:8b
+    ollama pull <model_name>
     ```
     *(**Note:** You can choose a different model if you prefer, but remember to update the model name within the project's code accordingly.)*
 
