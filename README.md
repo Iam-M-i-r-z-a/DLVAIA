@@ -5,6 +5,12 @@
 [![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black?style=for-the-badge&logo=ollama)](https://ollama.com/)
 
 ---
+
+## 📜 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](https://github.com/Iam-M-i-r-z-a/DLVAIA/blob/main/LICENSE) file for details.
+
+---
 ## ⚠️ Caution
 
 > **This project is deliberately insecure.**
