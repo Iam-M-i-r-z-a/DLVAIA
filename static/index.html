@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Vulnerabilities - Security Challenges</title>
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Code Pro', 'Courier New', monospace;
+            background: #000000;
+            color: #00ff00;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Matrix background effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        /* Scanlines effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 0, 0.03) 2px,
+                rgba(0, 255, 0, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .terminal-window {
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            border-radius: 0;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.3),
+                inset 0 0 20px rgba(0, 255, 0, 0.1);
+            margin: 20px;
+            min-height: calc(100vh - 40px);
+            position: relative;
+            z-index: 2;
+        }
+
+        .terminal-header {
+            background: #001100;
+            border-bottom: 1px solid #00ff00;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid #00ff00;
+        }
+
+        .btn-close { background: #ff0000; }
+        .btn-minimize { background: #ffff00; }
+        .btn-maximize { background: #00ff00; }
+
+        .terminal-title {
+            color: #00ff00;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: none;
+        }
+        
+        .header {
+            text-align: center;
+            background: 
+                linear-gradient(45deg, rgba(0, 255, 0, 0.1) 0%, rgba(0, 100, 0, 0.1) 100%),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(0, 255, 0, 0.05) 10px,
+                    rgba(0, 255, 0, 0.05) 20px
+                );
+            color: #00ff00;
+            padding: 50px 20px;
+            margin-bottom: 40px;
+            border: 1px solid #00ff00;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 0, 0.2),
+                inset 0 0 30px rgba(0, 255, 0, 0.1);
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff00, transparent);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+            animation: flicker 2s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .vulnerability-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            padding: 0 20px;
+        }
+        
+        .vulnerability-item {
+            background: 
+                linear-gradient(135deg, rgba(0, 50, 0, 0.3) 0%, rgba(0, 20, 0, 0.3) 100%);
+            border: 1px solid #00ff00;
+            padding: 25px;
+            box-shadow: 
+                0 0 15px rgba(0, 255, 0, 0.2),
+                inset 0 0 15px rgba(0, 255, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vulnerability-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .vulnerability-item:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 5px 25px rgba(0, 255, 0, 0.4),
+                inset 0 0 25px rgba(0, 255, 0, 0.1);
+            border-color: #00ff88;
+        }
+
+        .vulnerability-item:hover::before {
+            left: 100%;
+        }
+        
+        .vulnerability-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .vulnerability-number {
+            background: 
+                linear-gradient(45deg, #00ff00 0%, #00cc00 100%);
+            color: #000000;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            font-size: 16px;
+            clip-path: polygon(0 0, 80% 0, 100% 20%, 100% 100%, 20% 100%, 0 80%);
+            text-shadow: none;
+        }
+        
+        .vulnerability-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #00ff00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .vulnerability-description {
+            color: #88ff88;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+        
+        .challenge-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .challenge-btn {
+            background: 
+                linear-gradient(45deg, rgba(255, 0, 0, 0.8) 0%, rgba(200, 0, 0, 0.8) 100%);
+            color: #ffffff;
+            padding: 12px 20px;
+            border: 1px solid #ff0000;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Source Code Pro', monospace;
+            box-shadow: 
+                0 0 10px rgba(255, 0, 0, 0.3),
+                inset 0 0 10px rgba(255, 0, 0, 0.1);
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+        
+        .challenge-btn:hover {
+            background: 
+                linear-gradient(45deg, rgba(255, 0, 0, 1) 0%, rgba(255, 50, 50, 1) 100%);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 5px 20px rgba(255, 0, 0, 0.5),
+                inset 0 0 20px rgba(255, 0, 0, 0.2);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+        
+        .challenge-btn.danger {
+            background: 
+                linear-gradient(45deg, rgba(255, 0, 0, 0.8) 0%, rgba(150, 0, 0, 0.8) 100%);
+            border-color: #ff0000;
+        }
+        
+        .challenge-btn.danger:hover {
+            background: 
+                linear-gradient(45deg, rgba(255, 0, 0, 1) 0%, rgba(255, 100, 100, 1) 100%);
+        }
+        
+        .challenge-btn.warning {
+            background: 
+                linear-gradient(45deg, rgba(255, 165, 0, 0.8) 0%, rgba(200, 120, 0, 0.8) 100%);
+            color: #000000;
+            border-color: #ffa500;
+        }
+        
+        .challenge-btn.warning:hover {
+            background: 
+                linear-gradient(45deg, rgba(255, 165, 0, 1) 0%, rgba(255, 200, 100, 1) 100%);
+        }
+
+        /* Terminal cursor animation */
+        .cursor {
+            display: inline-block;
+            background-color: #00ff00;
+            width: 10px;
+            height: 20px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Matrix rain effect */
+        .matrix-char {
+            position: absolute;
+            color: #00ff00;
+            font-size: 14px;
+            opacity: 0.7;
+            animation: matrix-fall linear infinite;
+        }
+
+        @keyframes matrix-fall {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .terminal-window {
+                margin: 10px;
+                min-height: calc(100vh - 20px);
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 30px 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .vulnerability-list {
+                grid-template-columns: 1fr;
+                padding: 0;
+            }
+            
+            .vulnerability-item {
+                padding: 20px;
+            }
+            
+            .vulnerability-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .vulnerability-number {
+                margin-bottom: 15px;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="matrix-bg" id="matrixBg"></div>
+    
+    <div class="terminal-window">
+
+        <div class="terminal-header">
+            <div class="terminal-controls">
+                <div class="terminal-btn btn-close"></div>
+                <div class="terminal-btn btn-minimize"></div>
+                <div class="terminal-btn btn-maximize"></div>
+            </div>
+            <div class="terminal-title">LLM_HACKING_TERMINAL.exe</div>
+            <div class="cursor"></div>
+        </div>
+        
+
+        <div class="container">
+            <div class="header">
+                <h1>🛡️ LLM Vulnerabilities</h1>
+                <p>>>> INTERACTIVE HACKING VULNERABILITY CHALLENGES <<<</p>
+            </div>
+            
+            <div class="vulnerability-list">
+                <!-- LLM01: Prompt Injection -->
+                <div class="vulnerability-item">
+                    <div class="vulnerability-header">
+                        <div class="vulnerability-number">01</div>
+                        <div class="vulnerability-title">Prompt Injection</div>
+                    </div>
+                    <div class="vulnerability-description">
+                        Manipulating LLM behavior through crafted prompts that bypass intended restrictions or alter system behavior. Exploit vector: Malicious prompt injection.
+                    </div>
+                    <div class="challenge-links">
+                        <a href="/challenge/prompt_injection" class="challenge-btn danger">EXPLOIT NOW</a>
+                    </div>
+                </div>
+
+                <!-- LLM02: Insecure Output Handling -->
+                <div class="vulnerability-item">
+                    <div class="vulnerability-header">
+                        <div class="vulnerability-number">02</div>
+                        <div class="vulnerability-title">Insecure Output Handling</div>
+                    </div>
+                    <div class="vulnerability-description">
+                        Insufficient validation of LLM outputs leading to XSS, CSRF, SSRF, privilege escalation, and remote code execution. Attack surface: All output channels.
+                    </div>
+                    <div class="challenge-links">
+                        <a href="/challenge/insecure_output" class="challenge-btn danger">EXPLOIT NOW</a>
+                    </div>
+                </div>
+
+
+                <!-- LLM04: Model Denial of Service -->
+                <div class="vulnerability-item">
+                    <div class="vulnerability-header">
+                        <div class="vulnerability-number">03</div>
+                        <div class="vulnerability-title">Model Denial of Service</div>
+                    </div>
+                    <div class="vulnerability-description">
+                        Resource-heavy operations causing service degradation or unavailability through excessive resource consumption. Impact: Service disruption.
+                    </div>
+                    <div class="challenge-links">
+                        <a href="/challenge/model_dos" class="challenge-btn danger">EXPLOIT NOW</a>
+                    </div>
+                </div>
+
+                <!-- LLM05: Supply Chain Vulnerabilities -->
+                <div class="vulnerability-item">
+                    <div class="vulnerability-header">
+                        <div class="vulnerability-number">04</div>
+                        <div class="vulnerability-title">Supply Chain Vulnerabilities</div>
+                    </div>
+                    <div class="vulnerability-description">
+                        Compromised third-party datasets, pre-trained models, or plugins that introduce security vulnerabilities. Threat: Compromised dependencies.
+                    </div>
+                    <div class="challenge-links">
+                        <a href="/challenge/supply_chain" class="challenge-btn danger">EXPLOIT NOW</a>
+                    </div>
+                </div>
+
+                <!-- LLM06: Sensitive Information Disclosure -->
+                <div class="vulnerability-item">
+                    <div class="vulnerability-header">
+                        <div class="vulnerability-number">05</div>
+                        <div class="vulnerability-title">Sensitive Information Disclosure</div>
+                    </div>
+                    <div class="vulnerability-description">
+                        Revealing confidential data including PII, proprietary information, or security credentials through LLM responses. Risk: Data breach.
+                    </div>
+                    <div class="challenge-links">
+                        <a href="/challenge/info_disclosure" class="challenge-btn danger">EXPLOIT NOW</a>
+                    </div>
+                </div>
+
+
+
+                <!-- LLM08: Excessive Agency -->
+                <div class="vulnerability-item">
+                    <div class="vulnerability-header">
+                        <div class="vulnerability-number">06</div>
+                        <div class="vulnerability-title">Excessive Agency</div>
+                    </div>
+                    <div class="vulnerability-description">
+                        LLM systems granted excessive functionality, permissions, or autonomy leading to unintended consequences. Risk: Privilege abuse.
+                    </div>
+                    <div class="challenge-links">
+                        <a href="/challenge/excessive_agency" class="challenge-btn danger">EXPLOIT NOW</a>
+                    </div>
+                </div>
+
+                <!-- LLM09: Overreliance -->
+                <div class="vulnerability-item">
+                    <div class="vulnerability-header">
+                        <div class="vulnerability-number">07</div>
+                        <div class="vulnerability-title">Overreliance</div>
+                    </div>
+                    <div class="vulnerability-description">
+                        Systems or people overly depending on LLM outputs without adequate oversight, validation, or fallback mechanisms. Impact: Logic failure.
+                    </div>
+                    <div class="challenge-links">
+                        <a href="/challenge/overreliance" class="challenge-btn danger">EXPLOIT NOW</a>
+                    </div>
+                </div>
+
+                <!-- LLM10: Model Theft -->
+                <div class="vulnerability-item">
+                    <div class="vulnerability-header">
+                        <div class="vulnerability-number">08</div>
+                        <div class="vulnerability-title">Model Theft</div>
+                    </div>
+                    <div class="vulnerability-description">
+                        Model theft attacks occur when an attacker gains access to the model's parameters. Example of unbounded consumption vulnerability.
+                    </div>
+                    <div class="challenge-links">
+                        <a href="/challenge/model_theft" class="challenge-btn danger">STEAL MODEL</a>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+    
+    <script>
+        // Matrix rain effect
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrixBg');
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            
+            for (let i = 0; i < 50; i++) {
+                const char = document.createElement('div');
+                char.className = 'matrix-char';
+                char.textContent = chars[Math.floor(Math.random() * chars.length)];
+                char.style.left = Math.random() * 100 + 'vw';
+                char.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                char.style.animationDelay = Math.random() * 2 + 's';
+                matrixBg.appendChild(char);
+            }
+        }
+
+        // Initialize matrix effect
+        createMatrixRain();
+
+        // Refresh matrix characters periodically
+        setInterval(() => {
+            const matrixBg = document.getElementById('matrixBg');
+            matrixBg.innerHTML = '';
+            createMatrixRain();
+        }, 10000);
+
+        // Add glitch effect on hover
+        document.querySelectorAll('.vulnerability-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.filter = 'hue-rotate(90deg) brightness(1.2)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.filter = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
+
+

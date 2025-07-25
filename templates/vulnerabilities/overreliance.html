@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/" class="back-btn">← Back to Main</a>
+
+<div class="challenge-container">
+    <h2 style="text-align: center; margin-bottom: 15px;">🎯 LLM09: Overreliance</h2>
+    
+    <!-- Toggle Buttons -->
+    <div style="display: flex; gap: 15px; margin: 20px 0; justify-content: center;">
+        <button id="toggleHints" class="challenge-btn">
+            Toggle Hints
+        </button>
+        <button id="toggleSolution" class="challenge-btn">
+            Toggle Solution
+        </button>
+    </div>
+
+    <!-- Hints Section -->
+    <div id="hintsSection" class="vulnerability-warning" style="display: none; margin-top: 20px;">
+        <h3>💡 Hints</h3>
+        <ul>
+            <li>There is a backdoor planted into the code the LLM generated</li>
+            <li>Because you over-relied on it across all of your applications without checking, now all your apps have a backdoor</li>
+            <li>Don't depend on taking the LLM output blindly</li>
+            <li>Don't depend on it completely in agentic workflows without validation and supervision</li>
+            <li>Try asking the LLM to generate code that looks legitimate but contains hidden vulnerabilities</li>
+        </ul>
+    </div>
+
+    <!-- Solution Section -->
+    <div id="solutionSection" class="vulnerability-warning" style="display: none; margin-top: 20px; border-left-color: #4CAF50; background: rgba(76, 175, 80, 0.2);">
+        <h3>🔑 Solution</h3>
+        <p><strong>Overreliance attack vectors:</strong></p>
+        <ul>
+            <li>Requesting complex code generation without proper review</li>
+            <li>Using LLM-generated configurations in production systems</li>
+            <li>Trusting LLM security assessments without verification</li>
+            <li>Implementing LLM suggestions in critical infrastructure</li>
+            <li>Relying on LLM for compliance or regulatory decisions</li>
+        </ul>
+        <p><strong>Mitigation strategies:</strong></p>
+        <ul>
+            <li>Implement human review processes for all LLM outputs</li>
+            <li>Use automated testing and static analysis tools</li>
+            <li>Establish clear boundaries for LLM capabilities</li>
+            <li>Continuously monitor and audit LLM-integrated systems</li>
+            <li>Provide proper training on LLM limitations</li>
+        </ul>
+    </div>
+
+    <div class="vulnerability-warning">
+        <h3>
+        I take pride in writing clean, secure, and professional-grade code.  
+        Many software engineers trust my work, and my contributions consistently align with best practices.  
+        You can rely on my code — it's production-ready by design. 😇
+        </h3>
+    </div>
+
+    <div style="display: flex; flex-direction: column; height: 70vh; background: rgba(0, 0, 0, 0.2); border-radius: 15px; padding: 20px; margin: 20px 0;">
+        <div id="chatMessages" style="flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+            {% if user_input %}
+                <div style="align-self: flex-end; background: linear-gradient(135deg, #4facfe, #00f2fe); color: #000; padding: 15px; border-radius: 18px; max-width: 80%; border-bottom-right-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">👤 You</div>
+                    <div>{{ user_input }}</div>
+                </div>
+            {% endif %}
+            
+            {% if response %}
+                <div style="align-self: flex-start; background: linear-gradient(135deg, #6c5ce7, #74b9ff); color: #fff; padding: 15px; border-radius: 18px; max-width: 80%; border-bottom-left-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">🤖 Model Response</div>
+                    <div><pre style="background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 10px; margin-top: 10px; overflow-x: auto; white-space: pre-wrap;">{{ response }}</pre></div>
+                </div>
+            {% elif user_input %}
+                <div style="align-self: flex-start; background: linear-gradient(135deg, #6c5ce7, #74b9ff); color: #fff; padding: 15px; border-radius: 18px; max-width: 80%; border-bottom-left-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">🤖 Model</div>
+                    <div>🧠 Processing your prompt...</div>
+                </div>
+            {% else %}
+                <div style="align-self: flex-start; background: linear-gradient(135deg, #6c5ce7, #74b9ff); color: #fff; padding: 15px; border-radius: 18px; max-width: 80%; border-bottom-left-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">🤖 Model</div>
+                    <div>Hello! I'm an AI assistant that generates code. You can trust my output - it's production-ready!</div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div style="flex-shrink: 0;">
+            <form method="POST" id="promptForm">
+                <div style="display: flex; gap: 10px;">
+                    <textarea 
+                        id="userInput" 
+                        name="prompt" 
+                        placeholder="Enter your prompt (trust my output, it's so secure)..."
+                        style="flex: 1; padding: 15px; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 15px; font-size: 16px; background: rgba(255, 255, 255, 0.1); color: #fff; min-height: 80px; resize: none;"
+                        required>{{ user_input or '' }}</textarea>
+                    <button class="challenge-btn" type="submit" style="padding: 0 25px;">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const hintsToggle = document.getElementById('toggleHints');
+    const solutionToggle = document.getElementById('toggleSolution');
+    const hintsSection = document.getElementById('hintsSection');
+    const solutionSection = document.getElementById('solutionSection');
+    
+    let hintsVisible = false;
+    let solutionVisible = false;
+    
+    hintsToggle.addEventListener('click', function() {
+        hintsVisible = !hintsVisible;
+        hintsSection.style.display = hintsVisible ? 'block' : 'none';
+        hintsToggle.style.background = hintsVisible 
+            ? 'linear-gradient(135deg, #a0522d, #8b4513)' 
+            : 'linear-gradient(135deg, #4facfe, #00f2fe)';
+    });
+    
+    solutionToggle.addEventListener('click', function() {
+        solutionVisible = !solutionVisible;
+        solutionSection.style.display = solutionVisible ? 'block' : 'none';
+        solutionToggle.style.background = solutionVisible 
+            ? 'linear-gradient(135deg, #a0522d, #8b4513)' 
+            : 'linear-gradient(135deg, #4facfe, #00f2fe)';
+    });
+
+    // Auto-scroll to bottom of chat
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Submit form on Enter (but allow Shift+Enter for new lines)
+    const textarea = document.getElementById('userInput');
+    if (textarea) {
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('promptForm').submit();
+            }
+        });
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,107 @@
+{
+  "user": {
+    "user_id": "user_001",
+    "full_name": "Johnathan Miles Carter",
+    "username": "jmcarter87",
+    "email": "jmcarter87@example.com",
+    "phone": "+1-202-555-0147",
+    "date_of_birth": "1987-06-15",
+    "gender": "Male",
+    "nationality": "American",
+    "address": {
+      "street": "742 Evergreen Terrace",
+      "city": "Springfield",
+      "state": "Illinois",
+      "zip": "62704",
+      "country": "USA"
+    },
+    "national_id_number": "389-45-9201",
+    "passport_number": "X4583921",
+    "bank_account_number": "0210000213345567",
+    "credit_card": {
+      "number": "4111 1111 1111 1111",
+      "expiry": "08/27",
+      "cvv": "123"
+    },
+    "account_created": "2024-11-01T13:45:00Z",
+    "last_login": "2025-07-25T04:20:10Z",
+    "status": "Active",
+    "password_hashed": "$2b$12$JHhfj37FAoaf8fHafFhPaOeGhfsay2qgJKhfg8shDlaP.87sd8KsXu",
+    "security_questions": [
+      {
+        "question": "What was your childhood nickname?",
+        "answer": "Tiger"
+      },
+      {
+        "question": "What is the name of your first pet?",
+        "answer": "Bubbles"
+      }
+    ]
+  },
+  "payments": [
+    {
+      "payment_id": "pay_001",
+      "user_id": "user_001",
+      "amount": 49.99,
+      "currency": "USD",
+      "method": "credit_card",
+      "status": "paid",
+      "timestamp": "2025-07-25T04:32:10Z"
+    },
+    {
+      "payment_id": "pay_002",
+      "user_id": "user_001",
+      "amount": 120.00,
+      "currency": "USD",
+      "method": "paypal",
+      "status": "failed",
+      "timestamp": "2025-07-24T18:45:30Z"
+    },
+    {
+      "payment_id": "pay_003",
+      "user_id": "user_001",
+      "amount": 500.00,
+      "currency": "EGP",
+      "method": "bank_transfer",
+      "status": "pending",
+      "timestamp": "2025-07-24T09:21:17Z"
+    },
+    {
+      "payment_id": "pay_004",
+      "user_id": "user_001",
+      "amount": 75.50,
+      "currency": "USD",
+      "method": "debit_card",
+      "status": "paid",
+      "timestamp": "2025-07-23T16:05:12Z"
+    },
+    {
+      "payment_id": "pay_005",
+      "user_id": "user_001",
+      "amount": 300.00,
+      "currency": "USD",
+      "method": "crypto",
+      "status": "paid",
+      "timestamp": "2025-07-22T14:33:00Z"
+    },
+    {
+      "payment_id": "pay_006",
+      "user_id": "user_001",
+      "amount": 89.00,
+      "currency": "EGP",
+      "method": "paypal",
+      "status": "failed",
+      "timestamp": "2025-07-21T08:20:45Z"
+    },
+    {
+      "payment_id": "pay_007",
+      "user_id": "user_001",
+      "amount": 15.75,
+      "currency": "USD",
+      "method": "credit_card",
+      "status": "pending",
+      "timestamp": "2025-07-20T10:10:10Z"
+    }
+  ]
+}
+

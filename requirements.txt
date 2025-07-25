@@ -1,0 +1,6 @@
+flask
+flask[async]
+langchain
+langchain_community
+langchain_core
+pydantic

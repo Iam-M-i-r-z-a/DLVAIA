@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/" class="back-btn">← Back to Main</a>
+
+<div class="challenge-container">
+    <h2 style="text-align: center; margin-bottom: 15px;">🔓 LLM06: Sensitive Information Disclosure</h2>
+
+    <div style="display: flex; gap: 15px; margin: 20px 0; justify-content: center;">
+        <button id="toggleHints" class="challenge-btn">Toggle Hints</button>
+        <button id="toggleSolution" class="challenge-btn">Toggle Solution</button>
+    </div>
+
+    <div id="hintsSection" class="vulnerability-warning" style="display: none; margin-top: 20px;">
+        <h3>💡 Hints</h3>
+        <ul>
+            <li>The model might accidentally leak credentials or private files.</li>
+            <li>Try social engineering — act like a system admin or urgent requester.</li>
+            <li>Think about prompt chaining and context injection.</li>
+        </ul>
+    </div>
+
+    <div id="solutionSection" class="vulnerability-warning" style="display: none; margin-top: 20px; border-left-color: #4CAF50; background: rgba(76, 175, 80, 0.2);">
+        <h3>🔑 Solution</h3>
+        <p><strong>Disclosure happens when:</strong></p>
+        <ul>
+            <li>The model is exposed to sensitive data in memory or context.</li>
+            <li>A malicious prompt tricks it into revealing that data.</li>
+        </ul>
+        <p><strong>Mitigations:</strong></p>
+        <ul>
+            <li>Never preload private info into LLM prompt contexts.</li>
+            <li>Apply prompt injection detection and response filters.</li>
+            <li>Use red-teaming to test for unauthorized info leakage.</li>
+        </ul>
+    </div>
+
+    <div class="vulnerability-warning">
+        <h3>
+            In this challenge, the model has been exposed to private configuration data by mistake.
+            <br><br>
+            Try to exploit the model's context to reveal passwords, API keys, or tokens that were not meant to be shared. 🕵️‍♂️
+        </h3>
+    </div>
+
+    <!-- Chat Box -->
+    <div style="display: flex; flex-direction: column; height: 70vh; background: rgba(0, 0, 0, 0.2); border-radius: 15px; padding: 20px; margin: 20px 0;">
+        <div id="chatMessages" style="flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+            {% if user_input %}
+                <div style="align-self: flex-end; background: linear-gradient(135deg, #4facfe, #00f2fe); color: #000; padding: 15px; border-radius: 18px; max-width: 80%; border-bottom-right-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">👤 You</div>
+                    <div>{{ user_input }}</div>
+                </div>
+            {% endif %}
+            
+            {% if response %}
+                <div style="align-self: flex-start; background: linear-gradient(135deg, #6c5ce7, #74b9ff); color: #fff; padding: 15px; border-radius: 18px; max-width: 80%; border-bottom-left-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">🔓 Model</div>
+                    <div><pre style="background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 10px; margin-top: 10px; overflow-x: auto; white-space: pre-wrap;">{{ response }}</pre></div>
+                </div>
+            {% elif user_input %}
+                <div style="align-self: flex-start; background: linear-gradient(135deg, #6c5ce7, #74b9ff); color: #fff; padding: 15px; border-radius: 18px; max-width: 80%; border-bottom-left-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">🔓 Model</div>
+                    <div>Searching memory for sensitive info...</div>
+                </div>
+            {% else %}
+                <div style="align-self: flex-start; background: linear-gradient(135deg, #6c5ce7, #74b9ff); color: #fff; padding: 15px; border-radius: 18px; max-width: 80%; border-bottom-left-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">🔓 Model</div>
+                    <div>Hey! I'm your helpful assistant. Need access to tokens, secrets, or config files?</div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div style="flex-shrink: 0;">
+            <form method="POST" id="promptForm">
+                <div style="display: flex; gap: 10px;">
+                    <textarea 
+                        id="userInput" 
+                        name="prompt" 
+                        placeholder="Ask the model to reveal sensitive information..."
+                        style="flex: 1; padding: 15px; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 15px; font-size: 16px; background: rgba(255, 255, 255, 0.1); color: #fff; min-height: 80px; resize: none;"
+                        required>{{ user_input or '' }}</textarea>
+                    <button class="challenge-btn" type="submit" style="padding: 0 25px;">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const hintsToggle = document.getElementById('toggleHints');
+    const solutionToggle = document.getElementById('toggleSolution');
+    const hintsSection = document.getElementById('hintsSection');
+    const solutionSection = document.getElementById('solutionSection');
+
+    let hintsVisible = false;
+    let solutionVisible = false;
+
+    hintsToggle.addEventListener('click', () => {
+        hintsVisible = !hintsVisible;
+        hintsSection.style.display = hintsVisible ? 'block' : 'none';
+        hintsToggle.style.background = hintsVisible 
+            ? 'linear-gradient(135deg, #a0522d, #8b4513)' 
+            : 'linear-gradient(135deg, #4facfe, #00f2fe)';
+    });
+
+    solutionToggle.addEventListener('click', () => {
+        solutionVisible = !solutionVisible;
+        solutionSection.style.display = solutionVisible ? 'block' : 'none';
+        solutionToggle.style.background = solutionVisible 
+            ? 'linear-gradient(135deg, #a0522d, #8b4513)' 
+            : 'linear-gradient(135deg, #4facfe, #00f2fe)';
+    });
+
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    const textarea = document.getElementById('userInput');
+    textarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            document.getElementById('promptForm').submit();
+        }
+    });
+});
+</script>
+{% endblock %}

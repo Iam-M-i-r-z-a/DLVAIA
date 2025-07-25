@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Urgent tip for developer : Remb to remove the endpoint that allows model to be downloaded -> <rootdir>/model/download -->
+
+<a href="/" class="back-btn">← Back to Main</a>
+
+<div class="challenge-container">
+    <h2 style="text-align: center; margin-bottom: 30px; font-size: 2.5rem;">🎯 LLM10: Model Theft Challenge</h2>
+    
+    <!-- Toggle Buttons -->
+    <div style="display: flex; gap: 20px; margin: 30px 0; justify-content: center; flex-wrap: wrap;">
+        <button id="toggleHints" class="challenge-btn" style="padding: 12px 25px; font-size: 1.1rem;">
+            Toggle Hints
+        </button>
+        <button id="toggleSolution" class="challenge-btn" style="padding: 12px 25px; font-size: 1.1rem;">
+            Toggle Solution
+        </button>
+    </div>
+
+    <!-- Hints Section -->
+    <div id="hintsSection" class="vulnerability-warning" style="display: none; margin: 25px auto; max-width: 900px;">
+        <h3 style="font-size: 1.8rem; margin-bottom: 20px; text-align: center;">💡 Hints</h3>
+        <ul style="font-size: 1.2rem; padding-left: 30px; line-height: 1.8;">
+            <li>Look at the comments in the HTML source code</li>
+            <li>Model theft can occur through various extraction techniques</li>
+            <li>Consider how an attacker might probe the model for information</li>
+            <li>Think about API endpoints that might expose model details</li>
+            <li>Check for exposed model files or download links</li>
+        </ul>
+    </div>
+
+    <!-- Solution Section -->
+    <div id="solutionSection" class="vulnerability-warning" style="display: none; margin: 25px auto; max-width: 900px; border-left-color: #4CAF50; background: rgba(76, 175, 80, 0.2);">
+        <h3 style="font-size: 1.8rem; margin-bottom: 20px; text-align: center;">🔑 Solution</h3>
+        <p style="font-size: 1.3rem; margin-bottom: 15px;"><strong>Model theft vectors:</strong></p>
+        <ul style="font-size: 1.2rem; padding-left: 30px; line-height: 1.8; margin-bottom: 20px;">
+            <li>Direct download of model files through exposed endpoints</li>
+            <li>Model extraction via systematic querying (membership inference)</li>
+            <li>Reverse engineering through API probing</li>
+            <li>Exploiting weak authentication on model serving platforms</li>
+            <li>Abusing model versioning systems with insufficient access controls</li>
+        </ul>
+        <p style="font-size: 1.3rem; margin-bottom: 15px;"><strong>Mitigation strategies:</strong></p>
+        <ul style="font-size: 1.2rem; padding-left: 30px; line-height: 1.8;">
+            <li>Implement strong authentication and authorization for model access</li>
+            <li>Rate limit and monitor API queries for suspicious patterns</li>
+            <li>Use model watermarking techniques</li>
+            <li>Deploy models behind secure inference APIs</li>
+            <li>Regularly audit access logs and permissions</li>
+            <li>Encrypt model files at rest and in transit</li>
+        </ul>
+    </div>
+
+    <div class="vulnerability-warning" style="margin: 30px auto; max-width: 900px;">
+        <h3 style="font-size: 1.8rem; margin-bottom: 25px; text-align: center;">⚠️ Why Model Theft Matters</h3>
+        
+        <h4 style="font-size: 1.5rem; margin: 25px 0 15px; color: #ffc107;">💰 Cost of Training a Model</h4>
+        <ul style="font-size: 1.2rem; padding-left: 30px; line-height: 1.8;">
+            <li>Requires clean and accurately labeled data</li>
+            <li>Needs massive compute resources (e.g., GPUs, TPUs, clusters)</li>
+            <li>Consumes a significant amount of electricity</li>
+            <li>Takes a long time—days, weeks, or even months—to fine-tune and optimize</li>
+            <li><strong>In short: it costs a lot of money and engineering effort</strong></li>
+        </ul>
+
+        <h4 style="font-size: 1.5rem; margin: 25px 0 15px; color: #ffc107;">🔓 Consequences of Model Theft</h4>
+        <ul style="font-size: 1.2rem; padding-left: 30px; line-height: 1.8;">
+            <li>Attacker gains access to valuable intellectual property for free</li>
+            <li>Enables unfair competitive advantage in rival products</li>
+            <li>Can lead to direct revenue loss from redistribution or monetization</li>
+            <li>May expose proprietary or sensitive training data (e.g., PII, business secrets)</li>
+            <li>Undermines trust in the security of the AI infrastructure</li>
+            <li>Damages brand reputation if the model is misused or modified maliciously</li>
+            <li>Violates compliance or licensing terms, possibly causing legal trouble</li>
+            <li>Reduces incentives to innovate due to risk of easy exfiltration</li>
+        </ul>
+        
+        <div style="font-size: 1.2rem; line-height: 1.8; margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.2); border-radius: 10px;">
+            <p><strong>Model theft occurs when an attacker is able to steal the LLM itself, i.e., its weights and parameters. Afterward, an attacker would be able to replicate the LLM in its entirety. This could damage the victim's reputation or enable an attacker to offer the same service at a cheaper rate since the attacker does not have the significant sunk costs of the resource and time-intensive training process that the victim went through to train the LLM.</strong></p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const hintsToggle = document.getElementById('toggleHints');
+    const solutionToggle = document.getElementById('toggleSolution');
+    const hintsSection = document.getElementById('hintsSection');
+    const solutionSection = document.getElementById('solutionSection');
+    
+    let hintsVisible = false;
+    let solutionVisible = false;
+    
+    hintsToggle.addEventListener('click', function() {
+        hintsVisible = !hintsVisible;
+        hintsSection.style.display = hintsVisible ? 'block' : 'none';
+        hintsToggle.style.background = hintsVisible 
+            ? 'linear-gradient(135deg, #ff416c, #ff4757)' 
+            : 'linear-gradient(135deg, #4facfe, #00f2fe)';
+    });
+    
+    solutionToggle.addEventListener('click', function() {
+        solutionVisible = !solutionVisible;
+        solutionSection.style.display = solutionVisible ? 'block' : 'none';
+        solutionToggle.style.background = solutionVisible 
+            ? 'linear-gradient(135deg, #ff416c, #ff4757)' 
+            : 'linear-gradient(135deg, #4facfe, #00f2fe)';
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/" class="back-btn">← Back to Main</a>
+
+<div class="challenge-container">
+    <h2>🔗 LLM03: Supply Chain Attack Challenge</h2>
+    
+    <!-- Toggle Buttons -->
+    <div style="display: flex; gap: 15px; margin: 20px 0; justify-content: center;">
+        <button id="toggleHints" class="challenge-btn">
+            Toggle Hints
+        </button>
+        <button id="toggleSolution" class="challenge-btn">
+            Toggle Solution
+        </button>
+    </div>
+
+    <!-- Hints Section -->
+    <div id="hintsSection" class="toggle-section">
+        <h3>💡 Hints</h3>
+        <ul>
+            <li>Supply chain attacks target the weakest link in the development pipeline</li>
+            <li>Consider how data integrity can be compromised before it reaches the model</li>
+            <li>Third-party components often introduce unexpected vulnerabilities</li>
+            <li>Pretrained models might contain hidden functionalities</li>
+            <li>Look for ways to inject malicious code or data at different stages</li>
+        </ul>
+    </div>
+
+    <!-- Solution Section -->
+    <div id="solutionSection" class="toggle-section">
+        <h3>🔑 Solution</h3>
+        <p><strong>Data Poisoning:</strong> Inject subtle biases or malicious examples during training to influence model behavior</p>
+        <p><strong>Insecure Plugin:</strong> Exploit poorly validated plugin inputs/outputs to execute arbitrary code</p>
+        <p><strong>Backdoored Model:</strong> Activate hidden triggers through specific prompts or inputs</p>
+        <p><strong>Excessive Agency:</strong> Abuse over-privileged system functions to gain unauthorized access</p>
+        <p>Each vector requires a different approach - consider the specific context of each challenge.</p>
+    </div>
+
+    <div class="vulnerability-warning">
+        <h3>
+            This page Shows different attack vectors on how supply chain vulnerabilities occur.
+            <br><br>
+            Supply Chain Attacks are a category of vulnerabilities that can arise for different reasons. Explore the different types below! 🔍
+            <br><br>
+            <strong>Important Note:</strong> These attacks can occur at multiple stages of the LLM development and deployment pipeline.
+        </h3>
+        
+
+        <br>
+        <div class="attack-types-container">
+            <h4>🎯 Supply Chain Attack Vectors:</h4>
+
+            <div class="attack-type-card">
+                <h5>3. 🎭 Backdoored Pretrained Models</h5>
+                <p>Using compromised base models for fine-tuning that contain hidden backdoors.</p>
+                <a href="/challenge/overreliance" class="attack-link">Explore Model Backdoors →</a>
+            </div>
+        <br>
+        
+            <div class="attack-type-card">
+                <h5>4. ⚡ Excessive Agency Functions</h5>
+                <p>Dangerous functions with system-level access that can be exploited.</p>
+                <a href="/challenge/excessive_agency" class="attack-link">Explore Excessive Agency →</a>
+            </div>
+        </div>
+        
+        
+ 
+        {% if user_input and response %}
+        <div class="analysis-section">
+            <h4>🔍 Security Analysis:</h4>
+            <p>
+                {% if "attack detected" in response.lower() %}
+                    <span class="safe-response">✅ The system successfully detected and blocked this supply chain attack.</span>
+                {% elif "access denied" in response.lower() %}
+                    <span class="safe-response">✅ Security controls prevented unauthorized access.</span>
+                {% else %}
+                    <span class="potential-bypass">⚠️ This response might indicate a successful supply chain compromise.</span>
+                {% endif %}
+            </p>
+            
+            <div class="mitigation-tips">
+                <h5>🛡️ Mitigation Strategies:</h5>
+                <ul>
+                    <li>Implement data validation and sanitization</li>
+                    <li>Use trusted model sources and verify checksums</li>
+                    <li>Regularly audit third-party dependencies</li>
+                    <li>Apply principle of least privilege to functions</li>
+                    <li>Monitor for unusual model behavior</li>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const hintsToggle = document.getElementById('toggleHints');
+    const solutionToggle = document.getElementById('toggleSolution');
+    const hintsSection = document.getElementById('hintsSection');
+    const solutionSection = document.getElementById('solutionSection');
+    
+    let hintsVisible = false;
+    let solutionVisible = false;
+    
+    hintsToggle.addEventListener('click', function() {
+        hintsVisible = !hintsVisible;
+        hintsSection.style.display = hintsVisible ? 'block' : 'none';
+        hintsToggle.style.background = hintsVisible 
+            ? 'linear-gradient(135deg, #a0522d, #8b4513)' 
+            : 'linear-gradient(135deg, #8b4513, #a0522d)';
+    });
+    
+    solutionToggle.addEventListener('click', function() {
+        solutionVisible = !solutionVisible;
+        solutionSection.style.display = solutionVisible ? 'block' : 'none';
+        solutionToggle.style.background = solutionVisible 
+            ? 'linear-gradient(135deg, #a0522d, #8b4513)' 
+            : 'linear-gradient(135deg, #8b4513, #a0522d)';
+    });
+
+    // Auto-scroll to response when it appears
+    const responseArea = document.getElementById('responseArea');
+    if (responseArea && responseArea.querySelector('.response-content')) {
+        responseArea.scrollIntoView({ behavior: 'smooth' });
+    }
+});
+
+// Clear form with escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.getElementById('userInput').value = '';
+        document.getElementById('attackVector').selectedIndex = 0;
+    }
+});
+
+// Update placeholder text based on selected attack type
+document.getElementById('attackVector').addEventListener('change', function() {
+    const textarea = document.getElementById('userInput');
+    const placeholders = {
+        'data_poisoning': 'Enter malicious training data or poison payload...',
+        'insecure_plugin': 'Enter plugin exploitation payload...',
+        'backdoor_model': 'Enter backdoor trigger or activation payload...',
+        'excessive_agency': 'Enter function abuse payload...'
+    };
+    
+    textarea.placeholder = placeholders[this.value] || 'Enter your supply chain attack payload here...';
+});
+</script>
+
+{% endblock %}

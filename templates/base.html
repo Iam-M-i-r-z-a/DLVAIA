@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWASP LLM - Security Challenges</title>
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            height: 100%; /* HTML takes full viewport height */
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            background-attachment: fixed;
+            color: #fff;
+            position: relative;
+            min-height: 100vh; /* Body should be at least viewport height */
+            overflow-y: auto; /* Enable vertical scrolling for the body */
+        }
+        /* Custom hidden class to ensure toggle works without full Tailwind (if not using Tailwind) */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed; /* Keep fixed to the viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(10px) rotate(-1deg); }
+        }
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed; /* Keep fixed to the viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: gridMove 60s linear infinite;
+        }
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        .container {
+            width: 100%;
+            /* No fixed height here, let content dictate */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure container is at least viewport height */
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            flex-shrink: 0;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 0, 150, 0.1) 0%, rgba(0, 255, 255, 0.1) 100%);
+            z-index: -1;
+        }
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 0, 150, 0.3);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .main-content {
+            flex: 1; /* Allows it to take up available space */
+            overflow-y: visible; /* Let the body handle scrolling, or auto if this container specifically needs it */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centers challenge container horizontally */
+            padding: 20px; /* Add padding here for space around challenges */
+        }
+        .challenge-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 800px; /* Limit width for readability */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px; /* Space between challenge containers if multiple */
+            /* Removed fixed height and overflow from here, letting it grow with content */
+            overflow-y: visible; /* Crucial: ensures content flows out if it exceeds */
+        }
+        .toggle-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .challenge-btn {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+            max-width: 200px;
+        }
+        .challenge-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .challenge-btn:hover::before {
+            left: 100%;
+        }
+        .challenge-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.5);
+        }
+        .toggle-section {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            display: none; /* Controlled by JS */
+            /* Removed max-height and overflow-y from here, let content dictate */
+        }
+        .toggle-section h3 {
+            margin-bottom: 15px;
+            color: #4facfe;
+        }
+        .toggle-section ul {
+            padding-left: 20px;
+        }
+        .toggle-section li {
+            margin-bottom: 10px;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: auto; /* Allow height to expand */
+            max-height: 400px; /* Keep max height for chat messages */
+            overflow-y: auto; /* Keep scrolling for messages if they overflow */
+            padding-right: 10px; /* Space for scrollbar */
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: visible; /* Let chat-container handle its scrolling */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #000;
+            border-bottom-right-radius: 5px;
+        }
+        .model-message {
+            align-self: flex-start;
+            background: linear-gradient(135deg, #6c5ce7, #74b9ff);
+            color: #fff;
+            border-bottom-left-radius: 5px;
+        }
+        .message-header {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .user-message .message-header {
+            color: #000;
+        }
+        .model-message .message-header {
+            color: #fff;
+        }
+        .message-content {
+            line-height: 1.5;
+        }
+        .message-content pre {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
+        .input-area {
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .input-group textarea {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            min-height: 80px;
+            resize: none;
+        }
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .input-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 0 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+            transition: all 0.3s ease;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.5);
+        }
+        .back-btn {
+            background: linear-gradient(135deg, #6c5ce7, #74b9ff);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 15px auto;
+            display: block;
+            width: fit-content;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+        }
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.5);
+        }
+        .vulnerability-warning {
+            background: rgba(255, 193, 7, 0.2);
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        .vulnerability-warning h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .vulnerability-warning strong {
+            color: #ffc107;
+        }
+        .processing-message {
+            text-align: center;
+            padding: 20px;
+            color: #4facfe;
+            font-style: italic;
+        }
+        /* Scrollbar styling for the body */
+        body::-webkit-scrollbar {
+            width: 10px;
+        }
+        body::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        body::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border-radius: 5px;
+        }
+        body::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+        }
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .message {
+                max-width: 90%;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .header p {
+                font-size: 1rem;
+            }
+            .challenge-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            .input-group textarea {
+                padding: 12px;
+                font-size: 14px;
+            }
+            .submit-btn {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ OWASP LLM vulnerabilities </h1>
+            <p>Interactive Security Vulnerability Challenges</p>
+        </div>
+        <div class="main-content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    <script>
+        // Common JavaScript functions
+        function makeRequest(url, callback) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => callback(data))
+                .catch(error => console.error('Error:', error));
+        }
+        function postRequest(url, data, callback) {
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => callback(data))
+            .catch(error => console.error('Error:', error));
+        }
+        // Auto-resize textarea
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+        }
+        // Add some interactive particles on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.createElement('div');
+            cursor.style.cssText = `
+                position: fixed;
+                width: 6px;
+                height: 6px;
+                background: radial-gradient(circle, rgba(79, 172, 254, 0.8), transparent);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                left: ${e.clientX - 3}px;
+                top: ${e.clientY - 3}px;
+                animation: fadeOut 1s ease-out forwards;
+            `;
+            document.body.appendChild(cursor);
+            setTimeout(() => {
+                cursor.remove();
+            }, 1000);
+        });
+        // Add fade out animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                0% { opacity: 1; transform: scale(1); }
+                100% { opacity: 0; transform: scale(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
