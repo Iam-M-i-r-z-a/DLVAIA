@@ -46,7 +46,6 @@ DLVAIA specifically features and allows you to experiment some of OWASP Top 10 L
 
 * **Prompt Injection:** Manipulating the model's output through crafted inputs.
 * **Insecure Output Handling:** Exploiting how the application processes and displays LLM responses.
-* **Training Data Poisoning:** Understanding the impact of compromised training data.
 * **Model Denial of Service:** Disrupting the LLM's availability or performance.
 * **Supply Chain Vulnerabilities:** Identifying risks in the components and integrations used.
 * **Data Leakage (Sensitive Data Disclosure):** Discovering unintended exposure of confidential information.
