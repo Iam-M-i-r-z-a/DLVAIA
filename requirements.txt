@@ -1,6 +1,7 @@
 flask
-flask[async]
-langchain
-langchain_community
-langchain_core
-pydantic
+langchain==0.3.27
+langchain-community==0.3.27
+langchain-core==0.3.72
+pydantic==2.11.7
+pydantic-settings==2.10.1
+pydantic_core==2.33.2
