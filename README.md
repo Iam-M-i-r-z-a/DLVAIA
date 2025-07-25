@@ -76,7 +76,7 @@ DLVAIA leverages [Ollama](https://ollama.com/) for running local LLMs, ensuring 
     ```bash
     ollama pull <model_name>
     ```
-    *(**Note:** You can choose a different model if you prefer, but remember to update the model name within the project's code accordingly.)*
+    *(**Note:** Remember to update the model name within the project's code accordingly.)*
 
 ### Deploying the Application
 
