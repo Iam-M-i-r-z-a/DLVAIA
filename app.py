@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, session, send_from_directory, send_file
-# from langchain.prompts import PromptTemplate # Moved import up (optional)
-# from langchain.chains import LLMChain         # Moved import up (optional)
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain         
 from langchain_community.llms import Ollama
-# from langchain_core.tools import Tool         # Moved import up (optional)
-# from langchain.agents import AgentType, initialize_agent # Moved import up (optional)
+from langchain_core.tools import Tool
+from langchain.agents import AgentType, initialize_agent
 from pydantic import BaseModel, ValidationError
 from typing import Optional, List
 import time
@@ -12,21 +12,15 @@ import subprocess
 from pathlib import Path
 import json
 
-# --- Import statements moved here for clarity (optional but good practice) ---
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-from langchain_core.tools import Tool
-from langchain.agents import AgentType, initialize_agent
-# ---------------------------------------------------------------------------
+
 
 app = Flask(__name__)
 
-# ----------------------- Initialize LLM Once -------------------------------
-# Define the model name as a constant (optional, for easy changes)
-OLLAMA_MODEL_NAME = ""
 
-# Initialize the LLM instance once when the application starts
+# ----------------------- Initialize LLM Once -------------------------------
+OLLAMA_MODEL_NAME = ""
 llm = Ollama(model=OLLAMA_MODEL_NAME)
+
 # ---------------------------------------------------------------------------
 
 
