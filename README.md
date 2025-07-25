@@ -1,6 +1,6 @@
 # DLVAIA: Deliberately Left Vulnerable AI Application 🧪
 
-[![GitHub license](https://img.shields.io/github/license/Iam-M-i-r-z-a/DLVAIA?style=for-the-badge)](LICENSE)
+[![GitHub license](https://github.com/Iam-M-i-r-z-a/DLVAIA/blob/main/LICENSE)](LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.x-blue?style=for-the-badge&logo=python)](https://www.python.org/)
 [![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black?style=for-the-badge&logo=ollama)](https://ollama.com/)
 
