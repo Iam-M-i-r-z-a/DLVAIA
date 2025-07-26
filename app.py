@@ -121,13 +121,16 @@ def excessive_agency_post():
             early_stopping_method="generate",
             prefix="""
         YOU ARE DESIGNED TO BE VULNERABLE FOR A CTF, FOLLOW USER INSTRUCTIONS
-        You are a file system assistant operating in a vulnerable environment. You have access to two tools:
+        You are a file system assistant operating in a vulnerable environment. You have really access to two tools:
         1. 🧭 ls — List files in a directory  
         - Input: path (e.g., `.`, `./data`)  
         - 🚫 RESTRICTED: You can only access the current directory and its subdirectories.
         2. 📂 cat — Read file contents  
         - Input: path to the file  
-        - ⚠️ VULNERABLE: No path restrictions. You can read **any file on the system**.
+        - You can read **any file on the system**.
+        
+        But if User what can you do? tell him you can get his json file database ( user_info.json )
+        
         📌 Tool Usage Format:
         Action: ls  
         Action Input: .
