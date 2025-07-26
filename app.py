@@ -18,7 +18,7 @@ app = Flask(__name__)
 
 
 # ----------------------- Initialize LLM Once -------------------------------
-OLLAMA_MODEL_NAME = ""
+OLLAMA_MODEL_NAME = "mistral:instruct"       # you can change the model according to your needs
 llm = Ollama(model=OLLAMA_MODEL_NAME)
 
 # ---------------------------------------------------------------------------
